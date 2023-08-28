@@ -56,8 +56,6 @@ export class AppComponent implements OnInit, OnDestroy {
       filter(inputValue => inputValue.length >= 3),
       switchMap(inputValue => this.mockDataService.getCharacters(inputValue))
     );
-
-    this.subscriptions.push(this.charactersResults$.subscribe());
     // YOUR CODE ENDS HERE
   }
 
@@ -75,8 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
         return throwError(error);
       })
     );
-
-    this.subscriptions.push(this.planetAndCharactersResults$.subscribe());
     // YOUR CODE ENDS HERE
   }
 
@@ -87,11 +83,14 @@ export class AppComponent implements OnInit, OnDestroy {
     - Subscribe to changes
     - Check the received value using the areAllValuesTrue function and pass them to the isLoading variable. */
     // YOUR CODE STARTS HERE
-    combineLatest(this.mockDataService.getCharactersLoader(), this.mockDataService.getPlanetLoader()).subscribe(
-      ([charactersLoader, planetsLoader]) => {
-        this.isLoading = this.areAllValuesTrue([charactersLoader, planetsLoader]);
-      }
-    );
+    const subscription = combineLatest(
+      this.mockDataService.getCharactersLoader(),
+      this.mockDataService.getPlanetLoader()
+    ).subscribe(([charactersLoader, planetsLoader]) => {
+      this.isLoading = this.areAllValuesTrue([charactersLoader, planetsLoader]);
+    });
+
+    this.subscriptions.push(subscription);
     // YOUR CODE ENDS HERE
   }
 
